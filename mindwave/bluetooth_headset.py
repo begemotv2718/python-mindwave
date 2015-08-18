@@ -27,9 +27,11 @@ def connect_magic():
 
     """
     nearby_devices = bluetooth.discover_devices(lookup_names = True, duration=5)
+    
 
     for addr, name in nearby_devices:
-        if name == "MindWave Mobile":
+        print "Name: %s " % name
+        if name == "MindWave Mobile" or name == 'sichiray':
             print "found"
             return (connect_bluetooth_addr(addr), addr)
     return (None, "")

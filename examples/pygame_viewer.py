@@ -9,6 +9,7 @@ from mindwave.parser import ThinkGearParser, TimeSeriesRecorder
 from mindwave.bluetooth_headset import connect_magic, connect_bluetooth_addr
 from mindwave.bluetooth_headset import BluetoothError
 from example_startup import mindwave_startup
+import csv
 
 description = """Pygame Example
 """
@@ -100,7 +101,16 @@ def main():
                     else:
                         value = p.current_vector[i] *100.0/m
                     pygame.draw.rect(window, redColor, (600+i*30,450-value, 6,value))"""
+            pygame.draw.line(window,redColor,(25,500-200),(1000,500-200))
+            if len(recorder.poor_signal) > 0:
+                lv = 0
+                for i, value in enumerate(recorder.poor_signal[-1000:]):
+                    pygame.draw.line(window, greenColor, (i+25, 500-lv), (i+26, 500-value))
+                    lv=value
+
             if raw_eeg:
+                img1= font.render("Received %d points" % len(recorder.raw),False,greenColor)
+                window.blit(img1,(100,600))
                 lv = 0
                 for i,value in enumerate(recorder.raw[-1000:]):
                     v = value/ 2.0
@@ -113,6 +123,13 @@ def main():
 
         for event in pygame.event.get():
             if event.type==QUIT:
+                if raw_eeg:
+                    data_file = "/tmp/eeg.csv"
+                    print "Writing to data file %s" % data_file
+                    with open(data_file,"w") as datafile:
+                        writer=csv.writer(datafile)
+                        formatted_raw=[[x] for x in recorder.raw]
+                        writer.writerows(formatted_raw)
                 quit = True
             if event.type==KEYDOWN:
                 if event.key==K_ESCAPE:

@@ -96,6 +96,8 @@ class ThinkGearParser(object):
                                 left -= 2
                             elif packet_code == 0x02: # Poor signal
                                 a = yield
+                                v = struct.unpack("B",chr(a))[0]
+                                self.dispatch_data("poor_signal",v)
 
                                 left -= 1
                             elif packet_code == 0x04: # Attention (eSense)
@@ -170,8 +172,7 @@ class TimeSeriesRecorder:
                 self.blink_queue[-1] = self.current_blink_strength
  
         elif key == "poor_signal":
-            if len(self.poor_signal_queue)>0:
-                self.poor_signal_queue[-1] = a
+            self.poor_signal_queue.append(value)
 
         
     def record_meditation(self, attention):
