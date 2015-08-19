@@ -58,7 +58,7 @@ def main():
         except BluetoothError:
             pass
         window.blit(background_img,(0,0))
-        if len(recorder.attention)>0:
+        if (len(recorder.attention)>0 or len(recorder.raw)>0):
             iteration+=1
             flen = 50
             if len(recorder.raw)>=500:
@@ -83,13 +83,14 @@ def main():
                     pygame.draw.rect(window, color, (25+i*10, 400-value, 5, value))
             else:
                 pass
-            pygame.draw.circle(window, redColor, (800,200), int(recorder.attention[-1]/2))
-            pygame.draw.circle(window, greenColor, (800,200), 60/2,1)
-            pygame.draw.circle(window, greenColor, (800,200), 100/2,1)
-            window.blit(attention_img, (760,260))
-            pygame.draw.circle(window, redColor, (700,200), int(recorder.meditation[-1]/2))
-            pygame.draw.circle(window, greenColor, (700,200), 60/2, 1)
-            pygame.draw.circle(window, greenColor, (700,200), 100/2, 1)
+            if(len(recorder.attention)>0):
+                pygame.draw.circle(window, redColor, (800,200), int(recorder.attention[-1]/2))
+                pygame.draw.circle(window, greenColor, (800,200), 60/2,1)
+                pygame.draw.circle(window, greenColor, (800,200), 100/2,1)
+                window.blit(attention_img, (760,260))
+                pygame.draw.circle(window, redColor, (700,200), int(recorder.meditation[-1]/2))
+                pygame.draw.circle(window, greenColor, (700,200), 60/2, 1)
+                pygame.draw.circle(window, greenColor, (700,200), 100/2, 1)
 
             window.blit(meditation_img, (600,260))
 
@@ -117,7 +118,7 @@ def main():
                     pygame.draw.line(window, redColor, (i+25, 500-lv), (i+25, 500-v))
                     lv = v
         else:
-            img = font.render("Not receiving any data from mindwave...", False, redColor)
+            img = font.render("Not receiving any data from mindwave... %d %d %d" % (len(recorder.poor_signal),len(recorder.raw),len(recorder.meditation)), False, redColor)
             window.blit(img,(100,100))
             pass
 

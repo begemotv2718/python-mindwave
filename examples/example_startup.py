@@ -2,17 +2,19 @@ import time
 import sys
 import argparse
 import bluetooth
+from mindwave.serial_headset import serial_connect
 
 from mindwave.bluetooth_headset import connect_magic, connect_bluetooth_addr
 from mindwave.bluetooth_headset import BluetoothError
 
 def mindwave_startup(description="", extra_args=[]):
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('address', type=str, nargs='?',
+    parser.add_argument('--address', type=str, nargs='?',
             const=None, default=None,
             help="""Bluetooth Address of device. Use this
             if you have multiple headsets nearby or you want
             to save a few seconds during startup.""")
+
     for params in extra_args:
         name = params['name']
         del params['name']
@@ -23,6 +25,9 @@ def mindwave_startup(description="", extra_args=[]):
         if socket is None:
             print "No MindWave Mobile found."
             sys.exit(-1)
+    elif(args.address == 'serial'):
+        socket, socket_addr = serial_connect()
+        print "Connected to serial console"
     else:
         socket = connect_bluetooth_addr(args.address)
         if socket is None:
